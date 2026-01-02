@@ -1,2 +1,5 @@
-# lumineux
-helpful functions for analyzing luminex data, tailored for outputs from Flexmap 3D machine
+## Luminex Analysis
+
+contains: 
+
+- functions useful in analysis of luminex data from dallab (flexmap 3D instrument output)

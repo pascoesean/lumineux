@@ -73,6 +73,11 @@ get_estimated_concentrations_one_analyte <- function (data, top_standard_concent
 
   too_low_basically_blank <- blank$mmedian + (3 * blank$stdev)
 
+  # if any blank read is actually a random sample from a uniform distribution of concentrations
+  # below the lower limit of detection, half of this lower limit is unbiased estimator of that value
+  # i think. i think also MLE . wahoo
+  estimated_blank_concentration <- top_standard_concentration/(2*(3^6))
+
   targets <- data |>
     mutate(prop_of_top = mfi / top_standard_mmfi,
            check_asymptotes = case_when(
@@ -87,9 +92,10 @@ get_estimated_concentrations_one_analyte <- function (data, top_standard_concent
     rename('concentration' = 'x') |>
     right_join(y=targets, by=join_by('y' == 'prop_of_top'), relationship = 'many-to-many') |>
     unique() |>
-    # NA out the too low ones
+    # replace too low ones with plausible value, or NA 
     mutate(concentration = case_when(
-      mfi < too_low_basically_blank ~ NA,
+      mfi < too_low_basically_blank ~ estimated_blank_concentration,
+      prop_of_top < bottom_asymptote ~ estimated_blank_concentration,
       TRUE ~ concentration
     )) 
 }

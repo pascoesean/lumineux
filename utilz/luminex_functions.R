@@ -95,7 +95,7 @@ get_estimated_concentrations_one_analyte <- function (data, top_standard_concent
     # replace too low ones with plausible value, or NA 
     mutate(concentration = case_when(
       mfi < too_low_basically_blank ~ estimated_blank_concentration,
-      prop_of_top < bottom_asymptote ~ estimated_blank_concentration,
+      y < bottom_asymptote ~ estimated_blank_concentration,
       TRUE ~ concentration
     )) 
 }
